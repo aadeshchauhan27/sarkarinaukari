@@ -1,0 +1,274 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import JobCard from '../../components/JobCard.astro';
+import { getCollection } from 'astro:content';
+import formatDate from '../components/formatDate';
+
+const documents = (await getCollection('jobs'))
+  .filter(job => job.data.category === 'documents')
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Government Documents",
+  "description": "Download important government document formats and applications",
+  "url": Astro.url.href
+};
+---
+
+<BaseLayout 
+  title="Government Documents 2025 - Download Formats"
+  description="Download important government document formats and applications. Get income certificate, caste certificate, domicile certificate formats. Required documents list."
+  structuredData={structuredData}
+>
+  <Header />
+  
+  <main class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-4">Government Documents 2025</h1>
+      <p class="text-gray-600 text-lg">Download important government document formats and applications. Get all necessary certificates and documents required for various government schemes and applications.</p>
+    </div>
+
+    <!-- Document Categories -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">Income</div>
+        <div class="text-sm opacity-90">Certificate Formats</div>
+      </div>
+      <div class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">Caste</div>
+        <div class="text-sm opacity-90">SC/ST/OBC Certificates</div>
+      </div>
+      <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">Domicile</div>
+        <div class="text-sm opacity-90">Residence Proof</div>
+      </div>
+      <div class="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">Character</div>
+        <div class="text-sm opacity-90">Police Verification</div>
+      </div>
+    </div>
+
+    <!-- Important Notice -->
+    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-8">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-blue-800">Document Guidelines</h3>
+          <div class="mt-2 text-sm text-blue-700">
+            <p>Always verify the latest formats from official government websites. Requirements may vary by state and purpose.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Filter Documents</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Document Type</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Documents</option>
+            <option value="certificate">Certificates</option>
+            <option value="application">Applications</option>
+            <option value="affidavit">Affidavits</option>
+            <option value="form">Forms</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Purpose</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Purposes</option>
+            <option value="education">Education</option>
+            <option value="employment">Employment</option>
+            <option value="scholarship">Scholarship</option>
+            <option value="reservation">Reservation</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Authority</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Authorities</option>
+            <option value="tehsildar">Tehsildar</option>
+            <option value="sdm">SDM</option>
+            <option value="collector">Collector</option>
+            <option value="police">Police</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {documents.map((doc) => (
+        <JobCard
+          title={doc.data.title}
+          organization={doc.data.organization}
+          posts={doc.data.posts}
+          lastDate={doc.data.lastDate}
+          category={doc.data.category}
+          featured={doc.data.featured}
+          slug={doc.slug}
+        />
+      ))}
+    </div>
+
+    {documents.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-gray-500 text-lg">Document formats will be available soon. Check back later for updates!</p>
+      </div>
+    )}
+
+    <!-- Document Application Process -->
+    <div class="mt-12 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">General Document Application Process</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Online Application</h3>
+          <ol class="list-decimal list-inside space-y-2 text-gray-600">
+            <li>Visit the official government portal</li>
+            <li>Register with your mobile number and email</li>
+            <li>Fill the application form with accurate details</li>
+            <li>Upload required documents in specified format</li>
+            <li>Pay the application fee online</li>
+            <li>Submit the application and save receipt</li>
+            <li>Track application status online</li>
+            <li>Download certificate once approved</li>
+          </ol>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Offline Application</h3>
+          <ol class="list-decimal list-inside space-y-2 text-gray-600">
+            <li>Download application form from official website</li>
+            <li>Fill the form completely in block letters</li>
+            <li>Attach all required documents</li>
+            <li>Get the form attested if required</li>
+            <li>Visit the concerned office during working hours</li>
+            <li>Submit application with fee payment</li>
+            <li>Collect acknowledgment receipt</li>
+            <li>Collect certificate after processing</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Common Required Documents -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Commonly Required Documents</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Identity Proof</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Aadhaar Card (mandatory for most)</li>
+            <li>• PAN Card</li>
+            <li>• Voter ID Card</li>
+            <li>• Passport</li>
+            <li>• Driving License</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Address Proof</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Ration Card</li>
+            <li>• Electricity Bill</li>
+            <li>• Water Bill</li>
+            <li>• Property Documents</li>
+            <li>• Bank Statement</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Educational Proof</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• 10th Class Certificate</li>
+            <li>• 12th Class Certificate</li>
+            <li>• Graduation Certificate</li>
+            <li>• School Leaving Certificate</li>
+            <li>• Migration Certificate</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- State-wise Information -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">State-wise Document Authorities</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Income Certificate</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Caste Certificate</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domicile Certificate</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Delhi</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">SDM Office</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">SDM Office</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">SDM Office</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Maharashtra</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tehsildar</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tehsildar</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tehsildar</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Karnataka</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tahsildar</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tahsildar</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tahsildar</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Uttar Pradesh</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tehsildar</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tehsildar</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tehsildar</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Processing Time and Fees -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Typical Processing Time and Fees</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Processing Time</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li><strong>Income Certificate:</strong> 15-30 days</li>
+            <li><strong>Caste Certificate:</strong> 15-45 days</li>
+            <li><strong>Domicile Certificate:</strong> 15-30 days</li>
+            <li><strong>Character Certificate:</strong> 15-30 days</li>
+            <li><strong>Birth Certificate:</strong> 7-21 days</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Typical Fees</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li><strong>Income Certificate:</strong> ₹20-₹100</li>
+            <li><strong>Caste Certificate:</strong> ₹30-₹150</li>
+            <li><strong>Domicile Certificate:</strong> ₹25-₹100</li>
+            <li><strong>Character Certificate:</strong> ₹50-₹200</li>
+            <li><strong>Birth Certificate:</strong> Free-₹50</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

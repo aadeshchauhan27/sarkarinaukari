@@ -1,0 +1,25 @@
+{
+  "name": "@example/basics",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.1",
+    "@astrojs/rss": "^4.0.12",
+    "@astrojs/sitemap": "^3.4.1",
+    "@astrojs/tailwind": "^6.0.2",
+    "@tailwindcss/typography": "^0.5.16",
+    "astro": "^5.2.5",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "quill": "^2.0.3",
+    "tailwindcss": "^3.4.3"
+  }
+}

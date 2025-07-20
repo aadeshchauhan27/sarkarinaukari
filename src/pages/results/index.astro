@@ -1,0 +1,185 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import JobCard from '../../components/JobCard.astro';
+import { getCollection } from 'astro:content';
+
+const results = (await getCollection('jobs'))
+  .filter(job => job.data.category === 'results')
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Latest Results",
+  "description": "Check latest government exam results and cut-off marks",
+  "url": Astro.url.href
+};
+---
+
+<BaseLayout 
+  title="Latest Results 2025 - Government Exam Results"
+  description="Check latest government exam results, cut-off marks, and merit lists. Get updates on SSC, IBPS, RRB, UPSC results. Download scorecards and certificates."
+  structuredData={structuredData}
+>
+  <Header />
+  
+  <main class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-4">Latest Results 2025</h1>
+      <p class="text-gray-600 text-lg">Check the latest government examination results, cut-off marks, and merit lists. Download your scorecards and certificates from official sources.</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-blue-600 mb-2">25+</div>
+        <div class="text-gray-600">Results This Month</div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-green-600 mb-2">1.2M+</div>
+        <div class="text-gray-600">Candidates Appeared</div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-purple-600 mb-2">15+</div>
+        <div class="text-gray-600">Organizations</div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-red-600 mb-2">50K+</div>
+        <div class="text-gray-600">Selected Candidates</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Filter Results</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Organization</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Organizations</option>
+            <option value="ssc">SSC</option>
+            <option value="ibps">IBPS</option>
+            <option value="rrb">Railway (RRB)</option>
+            <option value="upsc">UPSC</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Exam Type</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Exams</option>
+            <option value="preliminary">Preliminary</option>
+            <option value="mains">Mains</option>
+            <option value="final">Final</option>
+            <option value="interview">Interview</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Month</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Months</option>
+            <option value="january">January 2025</option>
+            <option value="december">December 2024</option>
+            <option value="november">November 2024</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {results.map((result) => (
+        <JobCard
+          title={result.data.title}
+          organization={result.data.organization}
+          posts={result.data.posts}
+          lastDate={result.data.lastDate}
+          category={result.data.category}
+          featured={result.data.featured}
+          slug={result.slug}
+        />
+      ))}
+    </div>
+
+    {results.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-gray-500 text-lg">No results available at the moment. Check back later for updates!</p>
+      </div>
+    )}
+
+    <!-- How to Check Results Section -->
+    <div class="mt-12 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">How to Check Your Result</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Online Result Check</h3>
+          <ol class="list-decimal list-inside space-y-2 text-gray-600">
+            <li>Visit the official website of the exam conducting body</li>
+            <li>Navigate to the "Results" or "Latest Updates" section</li>
+            <li>Click on the relevant exam result link</li>
+            <li>Enter your roll number and registration details</li>
+            <li>Submit and view your result</li>
+            <li>Download and save the scorecard</li>
+          </ol>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Do After Result</h3>
+          <ul class="list-disc list-inside space-y-2 text-gray-600">
+            <li>Download and print multiple copies of scorecard</li>
+            <li>Check cut-off marks and merit list</li>
+            <li>Verify all personal details on the result</li>
+            <li>Apply for next stage if qualified</li>
+            <li>Keep result safe for future reference</li>
+            <li>Check for any discrepancies and report immediately</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cut-off Trends -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Recent Cut-off Trends</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exam</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">General</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">OBC</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SC</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ST</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">SSC CGL 2025</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">142.50</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">135.75</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">125.50</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">118.25</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">IBPS PO 2024</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">78.25</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">74.50</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">68.75</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">62.25</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">RRB NTPC 2024</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">89.50</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">85.25</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">78.75</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">72.50</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

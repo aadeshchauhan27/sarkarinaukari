@@ -1,0 +1,275 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import JobCard from '../../components/JobCard.astro';
+import { getCollection } from 'astro:content';
+
+const admissions = (await getCollection('jobs'))
+  .filter(job => job.data.category === 'admission')
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "College Admissions",
+  "description": "Latest college and university admission notifications",
+  "url": Astro.url.href
+};
+---
+
+<BaseLayout 
+  title="College Admissions 2025 - University Entrance Exams"
+  description="Latest college and university admission notifications. Apply for engineering, medical, management, law courses. Check eligibility, exam dates, application process."
+  structuredData={structuredData}
+>
+  <Header />
+  
+  <main class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-4">College Admissions 2025</h1>
+      <p class="text-gray-600 text-lg">Discover the latest college and university admission opportunities. Apply for undergraduate and postgraduate programs in engineering, medical, management, and other fields.</p>
+    </div>
+
+    <!-- Popular Admission Categories -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">Engineering</div>
+        <div class="text-sm opacity-90">JEE, GATE, State CETs</div>
+      </div>
+      <div class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">Medical</div>
+        <div class="text-sm opacity-90">NEET, AIIMS, JIPMER</div>
+      </div>
+      <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">Management</div>
+        <div class="text-sm opacity-90">CAT, XAT, MAT, CMAT</div>
+      </div>
+      <div class="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">Law</div>
+        <div class="text-sm opacity-90">CLAT, AILET, LSAT</div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-blue-600 mb-2">500+</div>
+        <div class="text-gray-600">Universities</div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-green-600 mb-2">50L+</div>
+        <div class="text-gray-600">Total Seats</div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-purple-600 mb-2">100+</div>
+        <div class="text-gray-600">Entrance Exams</div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-red-600 mb-2">1000+</div>
+        <div class="text-gray-600">Courses Available</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Filter Admissions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Course Type</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Courses</option>
+            <option value="engineering">Engineering</option>
+            <option value="medical">Medical</option>
+            <option value="management">Management</option>
+            <option value="law">Law</option>
+            <option value="arts">Arts & Humanities</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Level</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Levels</option>
+            <option value="undergraduate">Undergraduate</option>
+            <option value="postgraduate">Postgraduate</option>
+            <option value="diploma">Diploma</option>
+            <option value="certificate">Certificate</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Exam Type</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Exams</option>
+            <option value="national">National Level</option>
+            <option value="state">State Level</option>
+            <option value="university">University Level</option>
+            <option value="institute">Institute Level</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admissions Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {admissions.map((admission) => (
+        <JobCard
+          title={admission.data.title}
+          organization={admission.data.organization}
+          posts={admission.data.posts}
+          lastDate={admission.data.lastDate}
+          category={admission.data.category}
+          featured={admission.data.featured}
+          slug={admission.slug}
+        />
+      ))}
+    </div>
+
+    {admissions.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-gray-500 text-lg">Admission notifications will be available soon. Check back later for updates!</p>
+      </div>
+    )}
+
+    <!-- Admission Calendar -->
+    <div class="mt-12 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Admission Calendar 2025</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">January - June 2025</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li><strong>January:</strong> JEE Main Session 1, NEET Application</li>
+            <li><strong>February:</strong> GATE Exam, CLAT Application</li>
+            <li><strong>March:</strong> JEE Main Session 2, GATE Result</li>
+            <li><strong>April:</strong> JEE Advanced Application, NEET Exam</li>
+            <li><strong>May:</strong> JEE Advanced Exam, CLAT Exam</li>
+            <li><strong>June:</strong> NEET Result, JEE Counselling</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">July - December 2025</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li><strong>July:</strong> NEET Counselling, CAT Notification</li>
+            <li><strong>August:</strong> CAT Application, State CET Exams</li>
+            <li><strong>September:</strong> Various State Entrance Exams</li>
+            <li><strong>October:</strong> CAT Admit Card, University Exams</li>
+            <li><strong>November:</strong> CAT Exam, Management Entrances</li>
+            <li><strong>December:</strong> CAT Result, Final Admissions</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Entrance Exams -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Top Entrance Exams by Category</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Engineering</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• JEE Main & Advanced</li>
+            <li>• GATE (for MTech)</li>
+            <li>• BITSAT</li>
+            <li>• VITEEE</li>
+            <li>• State CETs</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Medical</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• NEET UG</li>
+            <li>• NEET PG</li>
+            <li>• AIIMS (discontinued)</li>
+            <li>• JIPMER (merged with NEET)</li>
+            <li>• State NEET</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Management</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• CAT (for IIMs)</li>
+            <li>• XAT</li>
+            <li>• MAT</li>
+            <li>• CMAT</li>
+            <li>• SNAP</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Law</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• CLAT (for NLUs)</li>
+            <li>• AILET (for NLU Delhi)</li>
+            <li>• LSAT India</li>
+            <li>• DU LLB</li>
+            <li>• BHU UET</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preparation Tips -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">General Preparation Tips</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Study Strategy</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Create a realistic study schedule</li>
+            <li>• Focus on NCERT books for foundation</li>
+            <li>• Practice previous year papers</li>
+            <li>• Take regular mock tests</li>
+            <li>• Identify and work on weak areas</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Time Management</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Allocate time based on exam weightage</li>
+            <li>• Practice speed and accuracy</li>
+            <li>• Learn time-saving techniques</li>
+            <li>• Regular revision is crucial</li>
+            <li>• Maintain study-break balance</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Exam Day Tips</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Reach exam center early</li>
+            <li>• Carry all required documents</li>
+            <li>• Read instructions carefully</li>
+            <li>• Manage time during exam</li>
+            <li>• Stay calm and confident</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scholarship Information -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Scholarship Opportunities</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Merit-based Scholarships</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li><strong>National Talent Search (NTSE):</strong> For class 10 students</li>
+            <li><strong>KVPY:</strong> For science students (discontinued)</li>
+            <li><strong>JEE Advanced:</strong> Top performers get fee waiver</li>
+            <li><strong>Institute Scholarships:</strong> College-specific merit awards</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Need-based Scholarships</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li><strong>Central Sector Scheme:</strong> For college students</li>
+            <li><strong>State Scholarships:</strong> State government schemes</li>
+            <li><strong>Minority Scholarships:</strong> For minority communities</li>
+            <li><strong>EWS Scholarships:</strong> For economically weaker sections</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

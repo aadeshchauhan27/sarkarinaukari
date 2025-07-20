@@ -1,0 +1,241 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import JobCard from '../../components/JobCard.astro';
+import { getCollection } from 'astro:content';
+import formatDate from '../../components/formatDate';
+
+const answerKeys = (await getCollection('jobs'))
+  .filter(job => job.data.category === 'answer-key')
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Latest Answer Keys",
+  "description": "Download latest answer keys for government exams",
+  "url": Astro.url.href
+};
+---
+
+<BaseLayout 
+  title="Latest Answer Keys 2025 - Download Official Keys"
+  description="Download latest answer keys for government exams. Check correct answers for SSC, IBPS, RRB, UPSC, NEET exams. Raise objections and calculate scores."
+  structuredData={structuredData}
+>
+  <Header />
+  
+  <main class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-4">Latest Answer Keys 2025</h1>
+      <p class="text-gray-600 text-lg">Download official answer keys for government examinations. Check correct answers, calculate your expected scores, and raise objections if needed.</p>
+    </div>
+
+    <!-- Important Notice -->
+    <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-8">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-green-800">Answer Key Guidelines</h3>
+          <div class="mt-2 text-sm text-green-700">
+            <p>Always download answer keys from official websites. Use them to calculate expected scores and prepare for future exams.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-green-600 mb-2">15+</div>
+        <div class="text-gray-600">Answer Keys This Month</div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-blue-600 mb-2">50+</div>
+        <div class="text-gray-600">Exams Covered</div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-purple-600 mb-2">10+</div>
+        <div class="text-gray-600">Organizations</div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl font-bold text-red-600 mb-2">24/7</div>
+        <div class="text-gray-600">Updates Available</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Filter Answer Keys</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Organization</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Organizations</option>
+            <option value="ssc">SSC</option>
+            <option value="ibps">IBPS</option>
+            <option value="rrb">Railway (RRB)</option>
+            <option value="nta">NTA</option>
+            <option value="upsc">UPSC</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Exam Type</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Exams</option>
+            <option value="preliminary">Preliminary</option>
+            <option value="mains">Mains</option>
+            <option value="tier1">Tier 1</option>
+            <option value="tier2">Tier 2</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Subjects</option>
+            <option value="mathematics">Mathematics</option>
+            <option value="english">English</option>
+            <option value="reasoning">Reasoning</option>
+            <option value="gk">General Knowledge</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Answer Keys Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {answerKeys.map((key) => (
+        <JobCard
+          title={key.data.title}
+          organization={key.data.organization}
+          posts={key.data.posts}
+          lastDate={key.data.lastDate}
+          category={key.data.category}
+          featured={key.data.featured}
+          slug={key.slug}
+        />
+      ))}
+    </div>
+
+    {answerKeys.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-gray-500 text-lg">No answer keys available at the moment. Check back later for updates!</p>
+      </div>
+    )}
+
+    <!-- How to Use Answer Keys -->
+    <div class="mt-12 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">How to Use Answer Keys Effectively</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Score Calculation</h3>
+          <ol class="list-decimal list-inside space-y-2 text-gray-600">
+            <li>Download the official answer key from the conducting authority</li>
+            <li>Match your responses with the correct answers</li>
+            <li>Apply the marking scheme (positive and negative marking)</li>
+            <li>Calculate your total score for each section</li>
+            <li>Compare with previous year cut-offs</li>
+            <li>Estimate your chances of qualification</li>
+          </ol>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Objection Process</h3>
+          <ul class="list-disc list-inside space-y-2 text-gray-600">
+            <li>Check if the conducting authority allows objections</li>
+            <li>Identify questions where you believe the answer is incorrect</li>
+            <li>Gather supporting evidence (textbooks, reference materials)</li>
+            <li>Submit objections within the specified time limit</li>
+            <li>Pay the required objection fee (usually refunded if accepted)</li>
+            <li>Wait for the final answer key after reviewing objections</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Answer Key Analysis Tips -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Answer Key Analysis Tips</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Performance Analysis</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Identify strong and weak subjects</li>
+            <li>• Analyze time management during exam</li>
+            <li>• Check accuracy vs speed balance</li>
+            <li>• Note topics that need more preparation</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Strategy Improvement</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Review question selection strategy</li>
+            <li>• Analyze negative marking impact</li>
+            <li>• Plan better attempt strategy</li>
+            <li>• Focus on high-scoring sections</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Future Preparation</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Create targeted study plan</li>
+            <li>• Practice similar question patterns</li>
+            <li>• Improve weak areas systematically</li>
+            <li>• Take more mock tests</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Common Marking Schemes -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Common Marking Schemes</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exam</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correct Answer</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wrong Answer</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unattempted</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">SSC CGL</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">+2 marks</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-0.5 marks</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0 marks</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">IBPS PO</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">+1 mark</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-0.25 marks</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0 marks</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">NEET</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">+4 marks</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-1 mark</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0 marks</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">RRB NTPC</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">+1 mark</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-1/3 marks</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0 marks</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

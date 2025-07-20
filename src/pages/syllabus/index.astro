@@ -1,0 +1,177 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import JobCard from '../../components/JobCard.astro';
+import { getCollection } from 'astro:content';
+import formatDate from '../../components/formatDate';
+
+const syllabus = (await getCollection('jobs'))
+  .filter(job => job.data.category === 'syllabus')
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Exam Syllabus",
+  "description": "Download latest exam syllabus and preparation materials",
+  "url": Astro.url.href
+};
+---
+
+<BaseLayout 
+  title="Exam Syllabus 2025 - Download PDF"
+  description="Download latest exam syllabus for government jobs. Get detailed syllabus for SSC, IBPS, RRB, UPSC exams. Preparation tips and study materials."
+  structuredData={structuredData}
+>
+  <Header />
+  
+  <main class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-4">Exam Syllabus 2025</h1>
+      <p class="text-gray-600 text-lg">Download detailed syllabus for various government examinations. Get comprehensive study materials and preparation guidelines.</p>
+    </div>
+
+    <!-- Popular Syllabus Categories -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">SSC</div>
+        <div class="text-sm opacity-90">CGL, CHSL, MTS, GD</div>
+      </div>
+      <div class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">Banking</div>
+        <div class="text-sm opacity-90">IBPS, SBI, RBI</div>
+      </div>
+      <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">Railway</div>
+        <div class="text-sm opacity-90">RRB, NTPC, Group D</div>
+      </div>
+      <div class="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+        <div class="text-2xl font-bold mb-2">UPSC</div>
+        <div class="text-sm opacity-90">IAS, IPS, IFS</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Filter Syllabus</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Organization</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Organizations</option>
+            <option value="ssc">SSC</option>
+            <option value="ibps">IBPS</option>
+            <option value="rrb">Railway (RRB)</option>
+            <option value="upsc">UPSC</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Qualification</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Qualifications</option>
+            <option value="10th">10th Pass</option>
+            <option value="12th">12th Pass</option>
+            <option value="graduate">Graduate</option>
+            <option value="postgraduate">Post Graduate</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+          <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Subjects</option>
+            <option value="mathematics">Mathematics</option>
+            <option value="english">English</option>
+            <option value="reasoning">Reasoning</option>
+            <option value="gk">General Knowledge</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Syllabus Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {syllabus.map((item) => (
+        <JobCard
+          title={item.data.title}
+          organization={item.data.organization}
+          posts={item.data.posts}
+          lastDate={item.data.lastDate}
+          category={item.data.category}
+          featured={item.data.featured}
+          slug={item.slug}
+        />
+      ))}
+    </div>
+
+    {syllabus.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-gray-500 text-lg">Syllabus content will be available soon. Check back later for updates!</p>
+      </div>
+    )}
+
+    <!-- Study Tips Section -->
+    <div class="mt-12 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Effective Study Tips</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Preparation Strategy</h3>
+          <ul class="list-disc list-inside space-y-2 text-gray-600">
+            <li>Understand the complete syllabus thoroughly</li>
+            <li>Create a realistic study schedule</li>
+            <li>Focus on high-weightage topics first</li>
+            <li>Practice previous year question papers</li>
+            <li>Take regular mock tests</li>
+            <li>Revise regularly and make notes</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Subject-wise Tips</h3>
+          <ul class="list-disc list-inside space-y-2 text-gray-600">
+            <li><strong>Mathematics:</strong> Practice daily calculations</li>
+            <li><strong>English:</strong> Read newspapers and novels</li>
+            <li><strong>Reasoning:</strong> Solve puzzles and logical problems</li>
+            <li><strong>GK:</strong> Stay updated with current affairs</li>
+            <li><strong>Computer:</strong> Learn basic computer concepts</li>
+            <li><strong>Hindi:</strong> Focus on grammar and comprehension</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommended Books -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Recommended Study Materials</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Mathematics</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Quantitative Aptitude by R.S. Aggarwal</li>
+            <li>• Fast Track Objective Arithmetic</li>
+            <li>• Magical Book on Quicker Maths</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">English</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Objective General English by S.P. Bakshi</li>
+            <li>• Word Power Made Easy</li>
+            <li>• High School English Grammar</li>
+          </ul>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Reasoning</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• A Modern Approach to Verbal Reasoning</li>
+            <li>• Analytical Reasoning by M.K. Pandey</li>
+            <li>• Logical and Analytical Reasoning</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

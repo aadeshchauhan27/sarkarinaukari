@@ -1,0 +1,245 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import { formatDate } from '../../components/formatDate';
+
+export async function getStaticPaths() {
+  const jobs = await getCollection('jobs', ({ data }) => data.category === 'latest-jobs');
+  return jobs.map((job) => ({
+    params: { slug: job.slug },
+    props: { job },
+  }));
+}
+
+const { slug } = Astro.params;
+const { job } = Astro.props;
+
+if (!job) {
+  return Astro.redirect('/404');
+}
+
+const { Content } = await job.render();
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "JobPosting",
+  "title": job.data.title,
+  "description": job.data.seoDescription || `Apply for ${job.data.title} at ${job.data.organization}`,
+  "hiringOrganization": {
+    "@type": "Organization",
+    "name": job.data.organization
+  },
+  "jobLocation": {
+    "@type": "Place",
+    "address": job.data.location
+  },
+  "employmentType": "FULL_TIME",
+  "datePosted": new Date(job.data.publishedAt).toISOString(),
+  "validThrough": new Date(job.data.lastDate).toISOString(),
+  "baseSalary": {
+    "@type": "MonetaryAmount",
+    "currency": "INR",
+    "value": {
+      "@type": "QuantitativeValue",
+      "value": job.data.salary || "As per government norms"
+    }
+  }
+};
+
+const breadcrumbData = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://your-domain.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Latest Jobs",
+      "item": "https://your-domain.com/latest-jobs"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": job.data.title,
+      "item": Astro.url.href
+    }
+  ]
+};
+---
+
+<BaseLayout 
+  title={job.data.seoTitle || `${job.data.title} - Apply Online`}
+  description={job.data.seoDescription || `Apply for ${job.data.title} at ${job.data.organization}. Check eligibility, important dates, and application process.`}
+  structuredData={[structuredData, breadcrumbData]}
+>
+  <Header />
+  
+  <main class="container mx-auto px-4 py-8">
+    <!-- Breadcrumb -->
+    <nav class="mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center space-x-2 text-sm text-gray-500">
+        <li><a href="/" class="hover:text-blue-600">Home</a></li>
+        <li><span class="mx-2">/</span></li>
+        <li><a href="/latest-jobs" class="hover:text-blue-600">Latest Jobs</a></li>
+        <li><span class="mx-2">/</span></li>
+        <li class="text-gray-900 font-medium">{job.data.title}</li>
+      </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Main Content -->
+      <article class="lg:col-span-2">
+        <div class="bg-white rounded-lg shadow-md p-8">
+          <!-- Job Header -->
+          <header class="mb-6 pb-6 border-b border-gray-200">
+            <div class="flex items-start justify-between mb-4">
+              <h1 class="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+                {job.data.title}
+              </h1>
+              {job.data.featured && (
+                <span class="bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
+                  Featured
+                </span>
+              )}
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="font-medium text-gray-700">Organization:</span>
+                <span class="ml-2 text-gray-900">{job.data.organization}</span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700">Total Posts:</span>
+                <span class="ml-2 text-gray-900 font-semibold">{job.data.posts}</span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700">Last Date:</span>
+                <span class="ml-2 text-red-600 font-semibold">
+                  {formatDate(job.data.lastDate, 'en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
+                </span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700">Apply Mode:</span>
+                <span class="ml-2 text-gray-900 capitalize">{job.data.applyMode}</span>
+              </div>
+            </div>
+          </header>
+
+          <!-- Content -->
+          <div class="prose prose-lg max-w-none">
+            <Content />
+          </div>
+
+          <!-- Share Buttons -->
+          <div class="mt-8 pt-6 border-t border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Share This Job</h3>
+            <div class="flex space-x-3">
+              <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                Share on Facebook
+              </button>
+              <button class="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-500 transition-colors">
+                Share on Twitter
+              </button>
+              <button class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+                Share on WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Sidebar -->
+      <aside class="lg:col-span-1">
+        <!-- Quick Info -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Information</h3>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Qualification:</span>
+              <span class="font-medium">{job.data.qualification}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Location:</span>
+              <span class="font-medium">{job.data.location}</span>
+            </div>
+            {job.data.salary && (
+              <div class="flex justify-between">
+                <span class="text-gray-600">Salary:</span>
+                <span class="font-medium">{job.data.salary}</span>
+              </div>
+            )}
+            <div class="flex justify-between">
+              <span class="text-gray-600">Published:</span>
+              <span class="font-medium">
+                {formatDate(job.data.publishedAt, 'en-IN')}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        {job.data.tags && job.data.tags.length > 0 && (
+          <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Tags</h3>
+            <div class="flex flex-wrap gap-2">
+              {job.data.tags.map((tag) => (
+                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Related Jobs -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Related Jobs</h3>
+          <div class="space-y-3">
+            <a href="/latest-jobs/rrb-technician-2025" class="block text-blue-600 hover:text-blue-800 text-sm">
+              RRB Technician Form (6238 Posts)
+            </a>
+            <a href="/latest-jobs/ib-acio-grade-ii-2025" class="block text-blue-600 hover:text-blue-800 text-sm">
+              IB ACIO Grade-II Form (3717 Posts)
+            </a>
+            <a href="/latest-jobs/bob-lbo-2025" class="block text-blue-600 hover:text-blue-800 text-sm">
+              BOB LBO Online Form (2500 Posts)
+            </a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .prose {
+    color: #374151;
+  }
+  
+  .prose h1, .prose h2, .prose h3, .prose h4 {
+    color: #111827;
+    font-weight: 600;
+  }
+  
+  .prose table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .prose th, .prose td {
+    border: 1px solid #d1d5db;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  
+  .prose th {
+    background-color: #f9fafb;
+    font-weight: 600;
+  }
+</style>

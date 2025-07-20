@@ -1,0 +1,277 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import JobCard from '../components/JobCard.astro';
+import FeaturedButton from '../components/FeaturedButton.astro';
+import LiveIndicator from '../components/LiveIndicator.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { getCollection } from 'astro:content';
+
+// Fetch content
+const allJobs = await getCollection('jobs');
+const allNotifications = await getCollection('notifications');
+
+// Filter content by category
+const latestJobs = allJobs.filter(job => job.data.category === 'latest-jobs').slice(0, 5);
+const admitCards = allJobs.filter(job => job.data.category === 'admit-cards').slice(0, 5);
+const results = allJobs.filter(job => job.data.category === 'results').slice(0, 5);
+const answerKeys = allJobs.filter(job => job.data.category === 'answer-key').slice(0, 5);
+const documents = allJobs.filter(job => job.data.category === 'documents').slice(0, 5);
+const admissions = allJobs.filter(job => job.data.category === 'admission').slice(0, 5);
+
+// SEO structured data
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "SarkariResult Portal",
+  "description": "Latest Government Jobs, Results, Admit Cards, and Syllabus",
+  "url": "https://your-domain.com",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://your-domain.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+---
+
+<BaseLayout 
+  title="SarkariResult - Latest Government Jobs, Results, Admit Cards"
+  description="Get latest updates on Government Jobs, Results, Admit Cards, Answer Keys, Syllabus. Apply for Sarkari Naukri online. Updated daily with new notifications."
+  structuredData={structuredData}
+>
+  <Header />
+  
+  <main class="container mx-auto px-4 py-6">
+    <!-- Hero Section -->
+    <section class="text-center mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-2">
+          <span class="text-primary-600">Sarkari Result</span> Get Online Form, Results, Admit Card, Answer Key, Syllabus, Career News, Sarkari Yojana, Scholarship, Sarkari Notice etc.
+        </h2>
+        <LiveIndicator />
+        <WhatsAppButton />
+        
+        <!-- Tools Section -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-blue-600 mb-4">
+            <a href="/tools" class="hover:underline">SarkariResult Tools</a>
+          </h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Notifications Grid -->
+    <section class="mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <FeaturedButton 
+          title="SSC MTS / Havildar Online Form 2025"
+          subtitle=""
+          color="red"
+          href="/latest-jobs/ssc-mts-havildar-2025"
+        />
+        <FeaturedButton 
+          title="RRB Technician Form (6238 Post)"
+          subtitle=""
+          color="orange"
+          href="/latest-jobs/rrb-technician-2025"
+        />
+        <FeaturedButton 
+          title="IB ACIO Grade-II Form (3717 Posts)"
+          subtitle=""
+          color="purple"
+          href="/latest-jobs/ib-acio-grade-ii-2025"
+        />
+        <FeaturedButton 
+          title="BOB LBO Online Form (2500 Post)"
+          subtitle=""
+          color="blue"
+          href="/latest-jobs/bob-lbo-2025"
+        />
+        <FeaturedButton 
+          title="UP Police Constable Form (19,220 Post)"
+          subtitle=""
+          color="yellow"
+          href="/latest-jobs/up-police-constable-2025"
+        />
+        <FeaturedButton 
+          title="Army School AWES TGT, PGT, PRT Form"
+          subtitle=""
+          color="blue"
+          href="/latest-jobs/army-school-awes-2025"
+        />
+        <FeaturedButton 
+          title="IBPS PO 15th Form (5208 Posts)"
+          subtitle=""
+          color="red"
+          href="/latest-jobs/ibps-po-15th-2025"
+        />
+        <FeaturedButton 
+          title="Rajasthan High Court Peon Form"
+          subtitle=""
+          color="green"
+          href="/latest-jobs/rajasthan-high-court-peon-2025"
+        />
+      </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <!-- Results Section -->
+      <section class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="bg-primary-600 text-white px-6 py-3">
+            <h2 class="text-xl font-bold">Results</h2>
+          </div>
+          <div class="p-6 space-y-4">
+            {results.map((result) => (
+              <div class="border-b border-gray-100 pb-3 last:border-b-0">
+                <a href={`/results/${result.slug}`} class="text-blue-600 hover:text-blue-800 font-medium text-sm block mb-1">
+                  {result.data.title}
+                </a>
+                <p class="text-xs text-gray-600">{result.data.organization}</p>
+              </div>
+            ))}
+            <div class="pt-3">
+              <a href="/results" class="text-primary-600 hover:text-primary-700 font-medium text-sm">
+                View All Results →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Admit Cards Section -->
+      <section class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="bg-primary-600 text-white px-6 py-3">
+            <h2 class="text-xl font-bold">Admit Cards</h2>
+          </div>
+          <div class="p-6 space-y-4">
+            {admitCards.map((card) => (
+              <div class="border-b border-gray-100 pb-3 last:border-b-0">
+                <a href={`/admit-cards/${card.slug}`} class="text-blue-600 hover:text-blue-800 font-medium text-sm block mb-1">
+                  {card.data.title}
+                </a>
+                <p class="text-xs text-gray-600">{card.data.organization}</p>
+              </div>
+            ))}
+            <div class="pt-3">
+              <a href="/admit-cards" class="text-primary-600 hover:text-primary-700 font-medium text-sm">
+                View All Admit Cards →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Latest Jobs Section -->
+      <section class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="bg-primary-600 text-white px-6 py-3">
+            <h2 class="text-xl font-bold">Latest Jobs</h2>
+          </div>
+          <div class="p-6 space-y-4">
+            {latestJobs.map((job) => (
+              <div class="border-b border-gray-100 pb-3 last:border-b-0">
+                <a href={`/latest-jobs/${job.slug}`} class="text-blue-600 hover:text-blue-800 font-medium text-sm block mb-1">
+                  {job.data.title}
+                </a>
+                <p class="text-xs text-gray-600">{job.data.organization}</p>
+                <p class="text-xs text-gray-500">Posts: {job.data.posts}</p>
+              </div>
+            ))}
+            <div class="pt-3">
+              <a href="/latest-jobs" class="text-primary-600 hover:text-primary-700 font-medium text-sm">
+                View All Jobs →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Additional Sections Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Answer Keys Section -->
+      <section class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="bg-green-600 text-white px-6 py-3">
+            <h2 class="text-xl font-bold">Answer Keys</h2>
+          </div>
+          <div class="p-6 space-y-4">
+            {answerKeys.map((key) => (
+              <div class="border-b border-gray-100 pb-3 last:border-b-0">
+                <a href={`/answer-key/${key.slug}`} class="text-blue-600 hover:text-blue-800 font-medium text-sm block mb-1">
+                  {key.data.title}
+                </a>
+                <p class="text-xs text-gray-600">{key.data.organization}</p>
+              </div>
+            ))}
+            <div class="pt-3">
+              <a href="/answer-key" class="text-primary-600 hover:text-primary-700 font-medium text-sm">
+                View All Answer Keys →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Documents Section -->
+      <section class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="bg-purple-600 text-white px-6 py-3">
+            <h2 class="text-xl font-bold">Documents</h2>
+          </div>
+          <div class="p-6 space-y-4">
+            {documents.map((doc) => (
+              <div class="border-b border-gray-100 pb-3 last:border-b-0">
+                <a href={`/documents/${doc.slug}`} class="text-blue-600 hover:text-blue-800 font-medium text-sm block mb-1">
+                  {doc.data.title}
+                </a>
+                <p class="text-xs text-gray-600">{doc.data.organization}</p>
+              </div>
+            ))}
+            <div class="pt-3">
+              <a href="/documents" class="text-primary-600 hover:text-primary-700 font-medium text-sm">
+                View All Documents →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Admissions Section -->
+      <section class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="bg-orange-600 text-white px-6 py-3">
+            <h2 class="text-xl font-bold">Admissions</h2>
+          </div>
+          <div class="p-6 space-y-4">
+            {admissions.map((admission) => (
+              <div class="border-b border-gray-100 pb-3 last:border-b-0">
+                <a href={`/admission/${admission.slug}`} class="text-blue-600 hover:text-blue-800 font-medium text-sm block mb-1">
+                  {admission.data.title}
+                </a>
+                <p class="text-xs text-gray-600">{admission.data.organization}</p>
+              </div>
+            ))}
+            <div class="pt-3">
+              <a href="/admission" class="text-primary-600 hover:text-primary-700 font-medium text-sm">
+                View All Admissions →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

@@ -1,0 +1,74 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  structuredData?: object;
+}
+
+const { 
+  title, 
+  description = "Latest Government Jobs, Results, Admit Cards, Syllabus - SarkariResult Portal",
+  canonical,
+  ogImage = "/og-image.jpg",
+  structuredData
+} = Astro.props;
+
+const fullTitle = title.includes('SarkariResult') ? title : `${title} - SarkariResult Portal`;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{fullTitle}</title>
+  <meta name="description" content={description}>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+  <link rel="canonical" href={canonical || Astro.url.href}>
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content={fullTitle}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImage}>
+  <meta property="og:url" content={Astro.url.href}>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SarkariResult Portal">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={fullTitle}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImage}>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  
+  <!-- Preload Critical Resources -->
+  <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <!-- Structured Data -->
+  {structuredData && (
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  )}
+</head>
+<body class="bg-gray-50 font-sans">
+  <slot />
+</body>
+</html>
+
+<style is:global>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    line-height: 1.6;
+  }
+</style>
